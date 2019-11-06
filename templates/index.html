@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<p>
+    <a href="{{ url_for('.add_movie') }}">Add a new Movie</a>
+</p>
+{% if movies %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Release Date</th>
+                <th>Episode</th>
+                <th>Time Line Order</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in movies %}
+            <tr>
+                <td>{{ row.MovieID }}</td>
+                <td>{{ row.Name }}</td>
+                <td>{{ row.ReleaseDate }}</td>
+                <td>{{ row.Episode }}</td>
+                <td>{{ row.TimeLineOrder }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endif %}
+{% endblock %}

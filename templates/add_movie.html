@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div>
+    <h3>Add a new movie</h3>
+
+    <form method = "POST" action="{{ url_for('add_movie') }}">
+        {{ form.csrf_token}}
+        {{ form.Name.label }} {{ form.Name(size=50) }}
+        <br>
+        {{ form.ReleaseDate.label}} {{form.ReleaseDate(size=20) }}
+        <br>
+        {{ form.Episode.label}} {{form.Episode(size=20) }}
+        <br>
+        {{ form.TimeLineOrder.label}} {{ form.TimeLineOrder(size=20) }}
+
+        <input type="submit" value="Add Movie">
+    </form>
+
+</div>
+
+{% endblock %}
