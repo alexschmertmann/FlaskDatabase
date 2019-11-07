@@ -44,7 +44,7 @@ def add_movie():
         db.session.commit()
         return redirect('/')
 
-    return render_template('add_movie.html', form=form, pageTitle ='Add a movie')
+    return render_template('add_movie.html', form=form, legend="Add a movie", pageTitle ='Add a movie')
 
 @app.route('/movies/<int:MovieID>', methods=['GET','POST'])
 def movie(MovieID):
@@ -60,6 +60,7 @@ def update_movie(MovieID):
         movie.ReleaseDate = form.ReleaseDate.data
         movie.Episode = form.Episode.data
         movie.TimeLineOrder = form.TimeLineOrder.data
+        db.session.update()
         db.session.commit()
         flash('Your movie has been updated.')
         return redirect(url_for('movie', MovieID=movie.MovieID))
@@ -70,6 +71,17 @@ def update_movie(MovieID):
     form.TimeLineOrder.data = movie.TimeLineOrder
     return render_template('add_movie.html', form=form, pageTitle='Update Post',
                             legend="Update A Movie")
+
+@app.route('/movies/<int:MovieID>/delete', methods=['POST'])
+def delete_movie(MovieID):
+    if request.method == 'POST': #if it's a POST request, delete the movie from the database
+        movie = amschmertmann_star_wars.query.get_or_404(MovieID)
+        db.session.delete(movie)
+        db.session.commit()
+        flash('Movie was successfully deleted!')
+        return redirect("/")
+    else: #if it's a GET request, send them to the home page
+        return redirect("/")
 
 if __name__ == '__main__':
     app.run(debug=True)

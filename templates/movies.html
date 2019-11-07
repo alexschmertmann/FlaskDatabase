@@ -29,7 +29,7 @@
     {{ form.TimeLineOrder.label }} {{ form.TimeLineOrder}}
 
     <input type="submit" formaction="{{url_for('update_movie', MovieID=form.MovieID)}}" value="Update">
-    
+    <input type="submit" formaction="{{url_for('delete_movie', MovieID=form.MovieID)}}" value="Delete">
 
 
 
