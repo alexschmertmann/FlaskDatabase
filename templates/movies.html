@@ -24,9 +24,13 @@
     {{ form.csrf_token }}
 
     {{ form.Name.label }} {{ form.Name }}
+    <br>
     {{ form.ReleaseDate.label }} {{ form.ReleaseDate }}
+    <br>
     {{ form.Episode.label }} {{ form.Episode}}
+    <br>
     {{ form.TimeLineOrder.label }} {{ form.TimeLineOrder}}
+    <br>
 
     <input type="submit" formaction="{{url_for('update_movie', MovieID=form.MovieID)}}" value="Update">
     <input type="submit" formaction="{{url_for('delete_movie', MovieID=form.MovieID)}}" value="Delete">
