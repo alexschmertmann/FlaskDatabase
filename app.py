@@ -5,15 +5,15 @@ from wtforms import StringField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
-#import secrets
-import os
+import secrets
+#import os
 
-dbuser = os.environ.get('DBUSER')
-dbpass = os.environ.get('DBPASS')
-dbhost = os.environ.get('DBHOST')
-dbname = os.environ.get('DBNAME')
-conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser,dbpass,dbhost,dbname)
-#conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser,secrets.dbpass,secrets.dbhost,secrets.dbname)
+#dbuser = os.environ.get('DBUSER')
+#dbpass = os.environ.get('DBPASS')
+#dbhost = os.environ.get('DBHOST')
+#dbname = os.environ.get('DBNAME')
+#conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser,dbpass,dbhost,dbname)
+conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser,secrets.dbpass,secrets.dbhost,secrets.dbname)
 
 app = Flask(__name__)
 app.config['SECRET_KEY']= 'SuperSecretKey'
@@ -40,6 +40,20 @@ class MovieForm(FlaskForm):
 def index():
     all_movies = amschmertmann_star_wars.query.all()
     return render_template('index.html', movies = all_movies, pageTitle='Star Wars Films')
+
+@app.route('/search', methods=['GET','POST'])
+def search():
+    if request.method=='POST':
+        form = request.form
+        search_value = form['search_string']
+        search = "%{0}%".format(search_value)
+        results = amschmertmann_star_wars.query.filter(amschmertmann_star_wars.Name.like(search)).all()
+        return render_template('index.html', movies=results, pageTitle='Movies', legend="Search Results")
+    else:
+        return redirect('/')
+
+
+
 
 @app.route('/add_movie', methods=['GET', 'POST'])
 def add_movie():
