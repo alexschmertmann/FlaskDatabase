@@ -4,9 +4,11 @@
 <div>
     <h3>{{ legend }}</h3>
 
-    <form method = "POST" action="{{ url_for('add_movie') }}">
+    <form method = "POST" action="">
         {{ form.csrf_token}}
-        {{ form.Name.label }} {{ form.Name(size=20) }}
+        {{ form.MovieID.label }} {{ form.MovieID(size=20, readonly= true)}}
+        <br>
+        {{ form.Name.label }} {{ form.Name(size=50) }}
         <br>
         {{ form.ReleaseDate.label}} {{form.ReleaseDate(size=20) }}
         <br>
