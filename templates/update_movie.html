@@ -6,9 +6,15 @@
 
     <form method = "POST" action="">
         {{ form.csrf_token}}
+<<<<<<< HEAD
         {{ form.MovieID.label }} {{ form.MovieID(size=20, readonly= true )}}
         <br>
         {{ form.Name.label }} {{ form.Name(size=20) }}
+=======
+        {{ form.MovieID.label }} {{ form.MovieID(size=20, readonly= true)}}
+        <br>
+        {{ form.Name.label }} {{ form.Name(size=50) }}
+>>>>>>> UpdateDev
         <br>
         {{ form.ReleaseDate.label}} {{form.ReleaseDate(size=20) }}
         <br>

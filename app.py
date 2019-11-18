@@ -1,19 +1,19 @@
 from flask import Flask
 from flask import render_template, redirect, request, flash, url_for
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
-#import secrets
-import os
+import secrets
+#import os
 
-dbuser = os.environ.get('DBUSER')
-dbpass = os.environ.get('DBPASS')
-dbhost = os.environ.get('DBHOST')
-dbname = os.environ.get('DBNAME')
-conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser,dbpass,dbhost,dbname)
-#conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser,secrets.dbpass,secrets.dbhost,secrets.dbname)
+#dbuser = os.environ.get('DBUSER')
+#dbpass = os.environ.get('DBPASS')
+#dbhost = os.environ.get('DBHOST')
+#dbname = os.environ.get('DBNAME')
+#conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser,dbpass,dbhost,dbname)
+conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser,secrets.dbpass,secrets.dbhost,secrets.dbname)
 
 app = Flask(__name__)
 app.config['SECRET_KEY']= 'SuperSecretKey'
@@ -28,18 +28,33 @@ class amschmertmann_star_wars(db.Model):
     TimeLineOrder = db.Column(db.Integer)
 
 def __repr__(self):
-    return "id: {0} | Name: {1} | Release Date: {2} | Episode: {3} | Time Line Order: {4}".format(self.id,self.Name,self,ReleaseDate,self.Episode,self.TimeLineOrder)
+    return "id: {0} | Name: {1} | Release Date: {2} | Episode: {3} | Time Line Order: {4}".format(self.id,self.Name,self.ReleaseDate,self.Episode,self.TimeLineOrder)
 
 class MovieForm(FlaskForm):
+    MovieID = IntegerField('MovieID:')
     Name = StringField('Name:', validators=[DataRequired()])
     ReleaseDate = StringField('Release Date:', validators=[DataRequired()])
-    Episode = StringField('Episode:', validators=[DataRequired()])
+    Episode = StringField('Episode:')
     TimeLineOrder = StringField('Time Line Order:', validators=[DataRequired()])
 
 @app.route('/')
 def index():
     all_movies = amschmertmann_star_wars.query.all()
     return render_template('index.html', movies = all_movies, pageTitle='Star Wars Films')
+
+@app.route('/search', methods=['GET','POST'])
+def search():
+    if request.method=='POST':
+        form = request.form
+        search_value = form['search_string']
+        search = "%{0}%".format(search_value)
+        results = amschmertmann_star_wars.query.filter(amschmertmann_star_wars.Name.like(search)).all()
+        return render_template('index.html', movies=results, pageTitle='Movies', legend="Search Results")
+    else:
+        return redirect('/')
+
+
+
 
 @app.route('/add_movie', methods=['GET', 'POST'])
 def add_movie():
@@ -55,7 +70,7 @@ def add_movie():
 @app.route('/movies/<int:MovieID>', methods=['GET','POST'])
 def movie(MovieID):
     movie = amschmertmann_star_wars.query.get_or_404(MovieID)
-    return render_template('movies.html', form=movie, pageTitle='Movie Details')
+    return render_template('movies.html', form=movie, pageTitle='Movie Details', legend="Movie Details")
 
 @app.route('/movies/<int:MovieID>/update', methods=['GET','POST'])
 def update_movie(MovieID):
@@ -69,12 +84,12 @@ def update_movie(MovieID):
         db.session.commit()
         flash('Your movie has been updated.')
         return redirect(url_for('movie', MovieID=movie.MovieID))
-    #elif request.method == 'GET':
+    form.MovieID.data = movie.MovieID
     form.Name.data = movie.Name
     form.ReleaseDate.data = movie.ReleaseDate
     form.Episode.data = movie.Episode
     form.TimeLineOrder.data = movie.TimeLineOrder
-    return render_template('add_movie.html', form=form, pageTitle='Update Post',
+    return render_template('update_movie.html', form=form, pageTitle='Update Post',
                             legend="Update A Movie")
 
 @app.route('/movies/<int:MovieID>/delete', methods=['POST'])
